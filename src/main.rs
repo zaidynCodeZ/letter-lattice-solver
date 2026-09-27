@@ -6,6 +6,16 @@ use std::process;
 use std::collections::HashMap;
 
 fn main() -> std::io::Result<()> {
+    let args = process_args()?;
+    
+    let lattice = generate_lattice(&args.0, &args.1)?;
+    let mut chain: Vec<String> = Vec::new();
+    explore_lattice(&lattice, &args.0, &args.1, &mut chain);
+    chain.pop();
+    Ok(())
+}
+
+fn process_args() -> Result<(String, String), std::io::Error> {
     let args: Vec<String> = env::args().collect();
     
     if args.len() < 3 || args.len() > 3 {
@@ -20,11 +30,7 @@ fn main() -> std::io::Result<()> {
     let word1 = args[1].to_lowercase();
     let word2 = args[2].to_lowercase();
     
-    let lattice = generate_lattice(&word1, &word2)?;
-    let mut chain: Vec<String> = Vec::new();
-    explore_lattice(&lattice, &word1, &word2, &mut chain);
-    chain.pop();
-    Ok(())
+    Ok((word1, word2))
 }
 
 fn evaluate(word: &str, letters: &Vec<char>) -> bool {
